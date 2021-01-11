@@ -3,10 +3,18 @@
 class Matrix
 {
 public:
-	Matrix(int rows = 0, int cols = 0, const char* desc = nullptr)
+	Matrix(int rows = 0, int cols = 0, const std::string& desc = std::string())
 	{
+		this->arr = nullptr;
+		this->rows = 0;
+		this->cols = 0;
+		this->desc = new std::string(desc);
+
 		if (rows > 0 && cols > 0)
 		{
+			this->rows = rows;
+			this->cols = cols;
+
 			arr = new float* [rows];
 			for (int i = 0; i < rows; i++)
 			{
@@ -16,42 +24,21 @@ public:
 					arr[i][j] = 0;
 				}
 			}
-		
-			this->rows = rows;
-			this->cols = cols;
-		}
-		else
-		{
-			this->arr = nullptr;
-			this->rows = 0;
-			this->cols = 0;
-		}
-
-		if (desc)
-		{
-			this->desc = new std::string(desc);
-		}
-		else
-		{
-			this->desc = nullptr;
 		}
 	}
 
 	Matrix(const Matrix& m)
 	{
-		//std::cout << "Copy Constructor!" << "\n";
 		copy(m);
 	}
 
 	~Matrix()
 	{
-		//std::cout << "Destructor!" << "\n";
 		clear();
 	}
 
 	Matrix& operator=(Matrix& m)
 	{
-		//std::cout << "Assignment!" << "\n";
 		copy(m);
 		return (*this);
 	}
@@ -86,12 +73,9 @@ private:
 			}
 		}
 
-		if (m.desc)
-		{
-			desc = new std::string(*(m.desc));
-		}
-		
+		desc = new std::string(*(m.desc));
 	}
+
 	void clear()
 	{
 		if(arr)
@@ -114,7 +98,7 @@ private:
 std::ostream& operator<<(std::ostream& out, const Matrix& m)
 {
 	out << "Matrix " << m.rows << " X " << m.cols;
-	if (m.desc) out << " (Description: " << *(m.desc) << ")";
+	if (m.desc->length() > 0) out << " (Description: " << *(m.desc) << ")";
 	out << ":\n";
 
 	for (int i = 0; i < m.rows; i++)
@@ -144,25 +128,25 @@ std::istream& operator>>(std::istream& in, const Matrix& m)
 int main()
 {
 	//Default constructor
-	Matrix m0(0,0, "matrix 0");
+	Matrix m0;
 	std::cout << m0 << "\n";
 
 	//Dimension constructor + Input data from keyboard
-	Matrix m(2, 3);
+	Matrix m(2, 3, "Matrix 1");
 	std::cin >> m;
 
 	//Copy constructor
 	Matrix m2 = m;
-	std::cout << "\n" << m2 << "\n\n";
-
-	//m = m0;
-	//std::cout << "\n" << m << "\n\n";
+	std::cout << "\n" << m2 << "\n";
 
 	//Description constructor + operator[]
 	Matrix m3(2, 2, "Matrix 3");
 	m3[0][1] = 50;
 	m3[1][0] = 100;
-	std::cout << "m3[1][0]: " << m3[1][0] << "\n\n";
+
+	//m = m0;
+	//std::cout << "\n" << m << "\n\n";
+	//std::cout << "m3[1][0]: " << m3[1][0] << "\n\n";
 
 	//operator=
 	m2 = m3;
